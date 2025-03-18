@@ -20,7 +20,7 @@
       "esri/layers/FeatureLayer",
       "esri/geometry/Polygon",
       "esri/geometry/Polyline",
-       "esri/renderers/UniqueValueRenderer"
+      "esri/renderers/UniqueValueRenderer"
 ], function(esriConfig, Map, MapView, Graphic, GraphicsLayer, FeatureLayer, Polygon, Polyline, UniqueValueRenderer) {
 
         esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurJ1kLPomorD8TrKnUY-69H8k_xONIhZ8kcIboLXTep9_C10dAmnF8WtDsNt0ufTI6XphX36nbQIZA1sStLbpW_RiOh5ffFa3W6QekcMcdA5rRBIQZP3vJrRWPdiAhGouwmAqEq1tYZ1KPTzNbF_7QJnL0xpjT5w4fEm31PNDdvQN2m-wX1uAj1bjDC8vLQN8Si5-PZtpPkJpaHwRn_aFsto.AT1_RSTP1ZbY";
@@ -37,46 +37,46 @@
         const graphicsLayer = new GraphicsLayer();  
         map.add(graphicsLayer);
         
+        const DeathRenderer = new UniqueValueRenderer({
+          field: "Total_Fatalities",
+          uniqueValueInfos: [
+            {
+              value: "1",
+              symbol: {
+                type: "picture-marker",
+                url: "PedestrianRed.PNG",
+                width: "18px",
+                height: "18px"
+              }
+            },
+            {
+              value: "0",
+              symbol: {
+                type: "picture-marker",
+                url: "PedestrianBlack.PNG",
+                width: "18px",
+                height: "18px"
+              }
+            }
+          ]
         });
 
-        const DeathRenderer = new UniqueValueRenderer({
-      field: "Total_Fatalities",
-      uniqueValueInfos: [
-        {
-          value: "1",
-          symbol: {
-            type: "picture-marker",
-            url: "https://sounny.github.io/agol/outline_local_airport_black_24dp.png",
-            width: "18px",
-            height: "18px"
-          }
-        },
-        {
-          value: "0",
-          symbol: {
-            type: "picture-marker",
-            url: "helicopterpng.png",
-            width: "18px",
-            height: "18px"
-          }
-        }
-      ]
-    })
+        const popupGNVPA = {
+          "title": "Pedestrian Traffic Accidents",
+          "content": "<b>Address:</b> {Address}<br><b>Type:</b> {Fac_Type}<br><b>Airspace:</b> {Airspace_A}<br><b>Location ID:</b> {Loc_Id}"
+        };
 
-const popupGNVPA = {
-  "title": "Airports",
-  "content": "<b>Name:</b> {Fac_Name}<br><b>Type:</b> {Fac_Type}<br><b>Airspace:</b> {Airspace_A}<br><b>Location ID:</b> {Loc_Id}"
-}
+        const GNVPA = new FeatureLayer({
+          url: "https://services.arcgis.com/LBbVDC0hKPAnLRpO/arcgis/rest/services/GNV_Pedestrian_Accidents_/FeatureServer",
+          renderer: DeathRenderer,
+          definitionExpression: "Total_Fatalities = '1' OR Total_Fatalities = '0'",
+          popupTemplate: popupGNVPA
+        });
 
-const GNVPA = new FeatureLayer({
-url: "https://services.arcgis.com/LBbVDC0hKPAnLRpO/arcgis/rest/services/GNV_Pedestrian_Accidents_/FeatureServer",
-renderer: DeathRenderer,
-definitionExpression: "Total_Fatalities = '1' OR Total_Fatalities = '0'",
+        map.add(GNVPA);
+        
+        });
 
-popupTemplate: popupGNVPA
- });
-
-map.add(GNVPA);
 </script>
 
 <style>
