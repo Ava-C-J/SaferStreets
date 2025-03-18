@@ -1,10 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Safer Streets for Gators</title>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="" />
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+    .addRecordBtn {
+  position: absolute;
+  z-index: 10;
+  top: 10px;
+  right: 10px;
+  background-color: #0079c1;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.addRecordBtn:hover {
+  background-color: #005a87;
+}
+  </style>
+
 
   <link rel="stylesheet" href="https://js.arcgis.com/4.25/esri/themes/light/main.css">
   <script src="https://js.arcgis.com/4.25/"></script>
@@ -20,8 +48,11 @@
       "esri/layers/FeatureLayer",
       "esri/geometry/Polygon",
       "esri/geometry/Polyline",
-      "esri/renderers/UniqueValueRenderer"
-], function(esriConfig, Map, MapView, Graphic, GraphicsLayer, FeatureLayer, Polygon, Polyline, UniqueValueRenderer) {
+      "esri/renderers/UniqueValueRenderer",
+      "esri/widgets/Locate",
+      "esri/widgets/Search",
+      "esri/symbols/PictureMarkerSymbol"
+], function(esriConfig, Map, MapView, Graphic, GraphicsLayer, FeatureLayer, Polygon, Polyline, UniqueValueRenderer, Locate, Search, PictureMarkerSymbol) {
 
         esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurJ1kLPomorD8TrKnUY-69H8k_xONIhZ8kcIboLXTep9_C10dAmnF8WtDsNt0ufTI6XphX36nbQIZA1sStLbpW_RiOh5ffFa3W6QekcMcdA5rRBIQZP3vJrRWPdiAhGouwmAqEq1tYZ1KPTzNbF_7QJnL0xpjT5w4fEm31PNDdvQN2m-wX1uAj1bjDC8vLQN8Si5-PZtpPkJpaHwRn_aFsto.AT1_RSTP1ZbY";
         const map = new Map({
@@ -34,6 +65,29 @@
           zoom: 13, 
           container: "viewDiv" 
         });
+
+        const locateBtn = new Locate({
+          view: view
+        });
+
+       
+        view.ui.add(locateBtn, {
+          position: "top-left"
+        });
+        const searchWidget = new Search({
+          view: view
+        });
+
+        view.ui.add(searchWidget, {
+          position: "bottom-right"
+        });
+
+        const customSymbol = new PictureMarkerSymbol({
+          url: "goosepng.png", 
+          width: "50px",
+          height: "50px"
+        });
+
         const graphicsLayer = new GraphicsLayer();  
         map.add(graphicsLayer);
         
@@ -44,7 +98,7 @@
               value: "1",
               symbol: {
                 type: "picture-marker",
-                url: "goosepng.png",
+                url: "PedestrianRed.PNG",
                 width: "18px",
                 height: "18px"
               }
@@ -53,7 +107,7 @@
               value: "0",
               symbol: {
                 type: "picture-marker",
-                url: "goosepng.png",
+                url: "PedestrianBlack.PNG",
                 width: "18px",
                 height: "18px"
               }
@@ -63,7 +117,7 @@
 
         const popupGNVPA = {
           "title": "Pedestrian Traffic Accidents",
-          "content": "<b>Address:</b> {Address}<br><b>Crash Date:</b> {Fac_Type}<br><b>Crash Time:</b> {Airspace_A}<br><b>Fatalities:</b> {Loc_Id}"
+          "content": "<b>Address:</b> {Address}<br><b>Crash Date:</b> {Crash_Date}<br><b>Crash Time:</b> {Crash_Time}<br><b>Total Vehicles:</b> {Total_Vehicles}<br><b>Total People:</b> {Total_People}<br><b>Fatalities:</b> {Total_Fatalities}"
         };
 
         const GNVPA = new FeatureLayer({
@@ -74,9 +128,33 @@
         });
 
         map.add(GNVPA);
-        
+
+        const layer = new FeatureLayer({ 
+   url: "https://services.arcgis.com/LBbVDC0hKPAnLRpO/arcgis/rest/services/survey123_f921e72c9e9543749b19ac58b32c4abd_results/FeatureServer",
+   renderer: {
+            type: "simple",
+            symbol: customSymbol
+          },
+   popupTemplate: {
+            title: "{Speeding Vehicles}", 
+            content: [{
+              type: "fields",
+              fieldInfos: [
+                {
+                  fieldName: "CreationDate",
+                  label: "Date",
+                  format: {
+                    dateFormat: "short-date-short-time"
+                  }
+                }
+              ]
+            }]
+          }
         });
+        map.add(layer);
       });
+    });
+        
 </script>
 
 <style>
@@ -93,6 +171,7 @@
 </head>
 <body>
 
+  <a href="https://arcg.is/1arCaf2"target="_blank" class="addRecordBtn">Add Record</a>
   <div id="viewDiv"></div>
 
 </body>
