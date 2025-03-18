@@ -107,7 +107,7 @@
               value: "0",
               symbol: {
                 type: "picture-marker",
-                url: "goosepng.png",
+                url: "pedestrianpng.png",
                 width: "18px",
                 height: "18px"
               }
@@ -130,29 +130,29 @@
         map.add(GNVPA);
 
         const layer = new FeatureLayer({ 
-   url: "https://services.arcgis.com/LBbVDC0hKPAnLRpO/arcgis/rest/services/survey123_f921e72c9e9543749b19ac58b32c4abd_results/FeatureServer",
-   renderer: {
-            type: "simple",
-            symbol: customSymbol
-          },
-   popupTemplate: {
-            title: "{Name}", 
-            content: [{
-              type: "fields",
-              fieldInfos: [
-                {
-                  fieldName: "CreationDate",
-                  label: "Date",
-                  format: {
-                    dateFormat: "short-date-short-time"
-                  }
+        url: "https://services.arcgis.com/LBbVDC0hKPAnLRpO/arcgis/rest/services/survey123_f921e72c9e9543749b19ac58b32c4abd_results/FeatureServer",
+        renderer: {
+          type: "simple",
+          symbol: customSymbol
+        },
+        popupTemplate: {
+          title: "{Name}", 
+          content: [{
+            type: "fields",
+            fieldInfos: [
+              {
+                fieldName: "CreationDate",
+                label: "Date",
+                format: {
+                  dateFormat: "short-date-short-time"
+                }
                 }
               ]
             }]
           }
         });
         map.add(layer);
-        console.log("Survey FeatureLayer added:", surveyLayer);
+        console.log("Survey FeatureLayer added:", layer);
       });
     });
         
