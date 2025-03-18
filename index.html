@@ -14,14 +14,14 @@
   require([
      "esri/config",
       "esri/Map",
-     "esri/views/MapView",   
+      "esri/views/MapView",   
       "esri/Graphic",  
       "esri/layers/GraphicsLayer",
       "esri/layers/FeatureLayer",
       "esri/geometry/Polygon",
       "esri/geometry/Polyline",
        "esri/renderers/UniqueValueRenderer"
-], function(esriConfig,Map, MapView, Graphic, GraphicsLayer, FeatureLayer, Polygon, Polyline, UniqueValueRenderer) {
+], function(esriConfig, Map, MapView, Graphic, GraphicsLayer, FeatureLayer, Polygon, Polyline, UniqueValueRenderer) {
 
         esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurJ1kLPomorD8TrKnUY-69H8k_xONIhZ8kcIboLXTep9_C10dAmnF8WtDsNt0ufTI6XphX36nbQIZA1sStLbpW_RiOh5ffFa3W6QekcMcdA5rRBIQZP3vJrRWPdiAhGouwmAqEq1tYZ1KPTzNbF_7QJnL0xpjT5w4fEm31PNDdvQN2m-wX1uAj1bjDC8vLQN8Si5-PZtpPkJpaHwRn_aFsto.AT1_RSTP1ZbY";
         const map = new Map({
@@ -30,7 +30,7 @@
 
         const view = new MapView({
           map: map,
-          center: [-97.7431, 30.2672], 
+          center: [-82.3250, 29.6520], 
           zoom: 13, 
           container: "viewDiv" 
         });
