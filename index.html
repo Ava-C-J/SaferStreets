@@ -56,7 +56,7 @@
 
         esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurJ1kLPomorD8TrKnUY-69H8k_xONIhZ8kcIboLXTep9_C10dAmnF8WtDsNt0ufTI6XphX36nbQIZA1sStLbpW_RiOh5ffFa3W6QekcMcdA5rRBIQZP3vJrRWPdiAhGouwmAqEq1tYZ1KPTzNbF_7QJnL0xpjT5w4fEm31PNDdvQN2m-wX1uAj1bjDC8vLQN8Si5-PZtpPkJpaHwRn_aFsto.AT1_RSTP1ZbY";
         const map = new Map({
-        basemap: "arcgis-topographic" 
+        basemap: "streets-vector" 
     });
 
         const view = new MapView({
@@ -84,8 +84,8 @@
 
         const customSymbol = new PictureMarkerSymbol({
           url: "Speedometer.png", 
-          width: "30px",
-          height: "30px"
+          width: "20px",
+          height: "20px"
         });
 
         const graphicsLayer = new GraphicsLayer();  
@@ -98,18 +98,18 @@
               value: "1",
               symbol: {
                 type: "picture-marker",
-                url: "PSymbolRed.PNG",
-                width: "30px",
-                height: "30px"
+                url: "PSymbolRed (1).png",
+                width: "20px",
+                height: "20px"
               }
             },
             {
               value: "0",
               symbol: {
                 type: "picture-marker",
-                url: "PSymbolBlack.PNG",
-                width: "18px",
-                height: "18px"
+                url: "PSymbolBlack (1).png",
+                width: "20px",
+                height: "20px"
               }
             }
           ]
@@ -129,27 +129,20 @@
 
         map.add(GNVPA);
 
+        const popupSpeed = {
+          "title": "Speeding Vehicle Reports",
+          "content": "<b>Date</b> {CreationDate}"
+        };
+
         const layer = new FeatureLayer({ 
         url: "https://services.arcgis.com/LBbVDC0hKPAnLRpO/arcgis/rest/services/survey123_f921e72c9e9543749b19ac58b32c4abd_results/FeatureServer",
+        outFields: ["CreationDate"],
         renderer: {
           type: "simple",
-          symbol: customSymbol
+          symbol: customSymbol,
         },
-        popupTemplate: {
-          title: "{Name}", 
-          content: [{
-            type: "fields",
-            fieldInfos: [
-              {
-                fieldName: "CreationDate",
-                label: "Date",
-                format: {
-                  dateFormat: "short-date-short-time"
-                }
-                }
-              ]
-            }]
-          }
+        popupTemplate: popupSpeed
+      
         });
         map.add(layer);
         console.log("Survey FeatureLayer added:", layer);
