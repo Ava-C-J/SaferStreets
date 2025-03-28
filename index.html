@@ -129,21 +129,38 @@
 
         map.add(GNVPA);
 
-        const popupSpeed = {
-          "title": "Speeding Vehicle Reports",
-          "content": "<b>Date</b> {CreationDate}"
-        };
+        const SurveyData = new UniqueValueRenderer({
+  field: "Type of Violation",
+  uniqueValueInfos: [
+    {
+      value: "Speeding",
+      symbol: {
+                type: "picture-marker",
+                url: "Speedometer.png",
+                width: "20px",
+                height: "20px"
+      }
+    },
+    {
+      value: "Running Red Light",
+      symbol: {
+                type: "picture-marker",
+                url: "trafficlightsymbol.png",
+                width: "20px",
+                height: "40px"
+      }
+    }
+  ]
+});
 
         const layer = new FeatureLayer({ 
         url: "https://services.arcgis.com/LBbVDC0hKPAnLRpO/arcgis/rest/services/survey123_f921e72c9e9543749b19ac58b32c4abd_results/FeatureServer",
-        outFields: ["CreationDate"],
-        renderer: {
-          type: "simple",
-          symbol: customSymbol,
-        },
-        popupTemplate: popupSpeed
-      
-        });
+        renderer: SurveyData,
+        popupTemplate: {
+       title: "Traffic Reports",
+        content: "<b>Type of Violation:</b> {Type of Violation}<br><b>Date:</b> {CreationDate}"
+  }
+       });
         map.add(layer);
         console.log("Survey FeatureLayer added:", layer);
       });
