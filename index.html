@@ -90,6 +90,7 @@
           uniqueValueInfos: [
             {
               value: "1",
+              label: "Fatal Crash",
               symbol: {
                 type: "picture-marker",
                 url: "PSymbolRed (1).png",
@@ -99,6 +100,7 @@
             },
             {
               value: "0",
+              label: "Non-Fatal Crash",
               symbol: {
                 type: "picture-marker",
                 url: "PSymbolBlack (1).png",
@@ -152,7 +154,7 @@
         renderer: SurveyData,
         popupTemplate: {
        title: "Traffic Reports",
-        content: "<b>Type of Violation:</b> {Type of Violation}<br><b>Date:</b> {CreationDate}"
+        content: "<b>Type of Violation:</b> {Type of Violation}<br><b>Date:</b> {CreationDate}<br><b>Reported by:</b> {Your Name}"
   }
        });
         map.add(layer);
@@ -197,9 +199,10 @@ filterDropdown.addEventListener("change", function () {
 
  const advancedSearchWidget = new Search({
   view: view,
-  includeDefaultSources: false, 
+  includeDefaultSources: false,
   searchAllEnabled: true,
-  placeholder: "Search for traffic violations or crashes",
+  suggestionsEnabled: true,
+  allPlaceholder: "Search Records...",
   sources: [
     {
       layer: GNVPA,
@@ -208,38 +211,42 @@ filterDropdown.addEventListener("change", function () {
       exactMatch: false,
       outFields: ["*"],
       name: "Pedestrian Traffic Crashes",
-      placeholder: "Search by Address, Date, or Time",
+      placeholder: "Search Records...",
       suggestionsEnabled: true 
     },
     {
       layer: layer,
-      searchFields: ["type_of_violation", "CreationDate"], 
+      searchFields: ["type_of_violation", "CreationDate", "your_name"], 
       displayField: "type_of_violation", 
       exactMatch: false,
       outFields: ["*"],
       name: "Traffic Violations",
-      placeholder: "Search by Violation Type or Date", 
+      placeholder: "Search Records...", 
       suggestionsEnabled: true 
     }
   ]
 });
+
+
 view.ui.add(advancedSearchWidget, {
   position: "bottom-right"
 });
-      
-        const legend = new Legend({
-        view: view,
-        layerInfos: [
-          {
-            layer: GNVPA,
-            title: "Pedestrian Traffic Crashes"
-          },
-          {
-            layer: layer,
-            title: "Traffic Violations"
-          }
-        ]
-      });
+
+
+const legend = new Legend({
+  view: view,
+  layerInfos: [
+    {
+      layer: GNVPA,
+      title: "Pedestrian Traffic Crashes" 
+    },
+    {
+      layer: layer,
+      title: "Traffic Violations" 
+    }
+  ]
+});
+
 
       const legendToggleButton = document.createElement("button");
 legendToggleButton.innerHTML = "Toggle Legend";
