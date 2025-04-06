@@ -51,8 +51,9 @@
       "esri/renderers/UniqueValueRenderer",
       "esri/widgets/Locate",
       "esri/widgets/Search",
+      "esri/widgets/Legend",
       "esri/symbols/PictureMarkerSymbol"
-], function(esriConfig, Map, MapView, Graphic, GraphicsLayer, FeatureLayer, Polygon, Polyline, UniqueValueRenderer, Locate, Search, PictureMarkerSymbol) {
+], function(esriConfig, Map, MapView, Graphic, GraphicsLayer, FeatureLayer, Polygon, Polyline, UniqueValueRenderer, Locate, Search, Legend, PictureMarkerSymbol) {
 
         esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurJ1kLPomorD8TrKnUY-69H8k_xONIhZ8kcIboLXTep9_C10dAmnF8WtDsNt0ufTI6XphX36nbQIZA1sStLbpW_RiOh5ffFa3W6QekcMcdA5rRBIQZP3vJrRWPdiAhGouwmAqEq1tYZ1KPTzNbF_7QJnL0xpjT5w4fEm31PNDdvQN2m-wX1uAj1bjDC8vLQN8Si5-PZtpPkJpaHwRn_aFsto.AT1_RSTP1ZbY";
         const map = new Map({
@@ -163,6 +164,75 @@
        });
         map.add(layer);
         console.log("Survey FeatureLayer added:", layer);
+
+      searchWidget.sources = [
+        {
+          layer: GNVPA,
+          searchFields: ["Address", "Crash_Date", "Crash_Time", "Total_Vehicles", "Total_People", "Total_Fatalities"],
+          displayField: "Address",
+          exactMatch: false,
+          outFields: ["*"],
+          name: "Pedestrian Traffic Crashes",
+          placeholder: "Search..."
+        },
+        {
+          layer: layer,
+          searchFields: ["Type of Violation"],
+          displayField: "Type of Violation",
+          exactMatch: false,
+          outFields: ["*"],
+          name: "Traffic Violations",
+          placeholder: "Search..."
+        }
+      ];
+
+      view.ui.add(searchWidget, {
+        position: "bottom-right"
+      });
+
+        const legend = new Legend({
+        view: view,
+        layerInfos: [
+          {
+            layer: GNVPA,
+            title: "Pedestrian Traffic Crashes"
+          },
+          {
+            layer: layer,
+            title: "Traffic Violations"
+          }
+        ]
+      });
+
+      const legendToggleButton = document.createElement("button");
+legendToggleButton.innerHTML = "Toggle Legend";
+legendToggleButton.className = "legend-toggle-btn";
+legendToggleButton.style.position = "absolute";
+legendToggleButton.style.top = "10px"; // Position it 10px from the top
+legendToggleButton.style.left = "50%"; // Center horizontally
+legendToggleButton.style.transform = "translateX(-50%)"; // Adjust for centering
+legendToggleButton.style.zIndex = "10";
+legendToggleButton.style.padding = "8px 16px";
+legendToggleButton.style.backgroundColor = "#0079c1";
+legendToggleButton.style.color = "white";
+legendToggleButton.style.border = "none";
+legendToggleButton.style.borderRadius = "4px";
+legendToggleButton.style.cursor = "pointer";
+
+      let legendVisible = false;
+
+      legendToggleButton.addEventListener("click", function() {
+        if (legendVisible) {
+          view.ui.remove(legend); // Remove the legend from the UI
+          legendVisible = false;
+        } else {
+          view.ui.add(legend, "bottom-left"); // Add the legend to the UI
+          legendVisible = true;
+        }
+      });
+
+      document.body.appendChild(legendToggleButton);
+
       });
     });
         
