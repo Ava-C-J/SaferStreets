@@ -75,14 +75,7 @@
         view.ui.add(locateBtn, {
           position: "top-left"
         });
-        const searchWidget = new Search({
-          view: view
-        });
-
-        view.ui.add(searchWidget, {
-          position: "bottom-right"
-        });
-
+      
         const customSymbol = new PictureMarkerSymbol({
           url: "Speedometer.png", 
           width: "20px",
@@ -165,31 +158,75 @@
         map.add(layer);
         console.log("Survey FeatureLayer added:", layer);
 
-      searchWidget.sources = [
-        {
-          layer: GNVPA,
-          searchFields: ["Address", "Crash_Date", "Crash_Time", "Total_Vehicles", "Total_People", "Total_Fatalities"],
-          displayField: "Address",
-          exactMatch: false,
-          outFields: ["*"],
-          name: "Pedestrian Traffic Crashes",
-          placeholder: "Search..."
-        },
-        {
-          layer: layer,
-          searchFields: ["Type of Violation"],
-          displayField: "Type of Violation",
-          exactMatch: false,
-          outFields: ["*"],
-          name: "Traffic Violations",
-          placeholder: "Search..."
-        }
-      ];
+ const filterDropdown = document.createElement("select");
+filterDropdown.style.position = "absolute";
+filterDropdown.style.top = "90px"; 
+filterDropdown.style.right = "10px";
+filterDropdown.style.zIndex = "10";
+filterDropdown.style.padding = "8px";
+filterDropdown.style.border = "1px solid #ccc";
+filterDropdown.style.borderRadius = "4px";
+filterDropdown.style.backgroundColor = "white";
+filterDropdown.innerHTML = `
+  <option value="">All Records</option>
+  <option value="type_of_violation = 'Speeding'">Speeding</option>
+  <option value="type_of_violation = 'Running Red Light'">Running Red Light</option>
+  <option value="Total_Fatalities > 0">Fatal Crashes</option>
+  <option value="Total_Fatalities = 0">Non-Fatal Crashes</option>
+`;
 
-      view.ui.add(searchWidget, {
-        position: "bottom-right"
-      });
+document.body.appendChild(filterDropdown);
 
+filterDropdown.addEventListener("change", function () {
+  const selectedFilter = filterDropdown.value;
+
+  
+  if (selectedFilter.includes("type_of_violation")) {
+    layer.definitionExpression = selectedFilter;
+    GNVPA.definitionExpression = "1=0"; 
+  } else if (selectedFilter.includes("Total_Fatalities")) {
+    GNVPA.definitionExpression = selectedFilter;
+    layer.definitionExpression = "1=0"; 
+  } else {
+  
+    GNVPA.definitionExpression = "";
+    layer.definitionExpression = "";
+  }
+
+});
+
+ const advancedSearchWidget = new Search({
+  view: view,
+  includeDefaultSources: false, 
+  searchAllEnabled: true,
+  placeholder: "Search for traffic violations or crashes",
+  sources: [
+    {
+      layer: GNVPA,
+      searchFields: ["Address", "Crash_Date", "Crash_Time", "Total_Vehicles", "Total_People", "Total_Fatalities"], 
+      displayField: "Address", 
+      exactMatch: false,
+      outFields: ["*"],
+      name: "Pedestrian Traffic Crashes",
+      placeholder: "Search by Address, Date, or Time",
+      suggestionsEnabled: true 
+    },
+    {
+      layer: layer,
+      searchFields: ["type_of_violation", "CreationDate"], 
+      displayField: "type_of_violation", 
+      exactMatch: false,
+      outFields: ["*"],
+      name: "Traffic Violations",
+      placeholder: "Search by Violation Type or Date", 
+      suggestionsEnabled: true 
+    }
+  ]
+});
+view.ui.add(advancedSearchWidget, {
+  position: "bottom-right"
+});
+      
         const legend = new Legend({
         view: view,
         layerInfos: [
@@ -208,9 +245,8 @@
 legendToggleButton.innerHTML = "Toggle Legend";
 legendToggleButton.className = "legend-toggle-btn";
 legendToggleButton.style.position = "absolute";
-legendToggleButton.style.top = "10px"; // Position it 10px from the top
-legendToggleButton.style.left = "50%"; // Center horizontally
-legendToggleButton.style.transform = "translateX(-50%)"; // Adjust for centering
+legendToggleButton.style.top = "50px"; // Position it 50px from the top (directly below the "Add Record" button)
+legendToggleButton.style.right = "10px"; // Align it with the "Add Record" button
 legendToggleButton.style.zIndex = "10";
 legendToggleButton.style.padding = "8px 16px";
 legendToggleButton.style.backgroundColor = "#0079c1";
